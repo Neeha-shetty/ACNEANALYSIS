@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AcneAI Analyzer - Camera Recognition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .disclaimer {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #ffeaa7;
+            font-size: 14px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 2rem 0;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .step-container {
+            background: white;
+            color: #333;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin: 1rem 0;
+        }
+        
+        .camera-container {
+            position: relative;
+            margin: 2rem 0;
+        }
+        
+        .camera-frame {
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            margin: 0 auto;
+            border: 3px solid #667eea;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #000;
+        }
+        
+        #videoElement {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .camera-placeholder {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            background: #f0f0f0;
+            color: #666;
+        }
+        
+        .camera-controls {
+            text-align: center;
+            margin: 1rem 0;
+        }
+        
+        button {
+            padding: 12px 24px;
+            margin: 0.5rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .primary-btn {
+            background: #667eea;
+            color: white;
+        }
+        
+        .secondary-btn {
+            background: #6c757d;
+            color: white;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .primary-btn:hover {
+            background: #5a6fd8;
+        }
+        
+        .secondary-btn:hover {
+            background: #5a6268;
+        }
+        
+        .questionnaire {
+            display: none;
+        }
+        
+        .question {
+            margin: 2rem 0;
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .option-btn {
+            padding: 1rem;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .option-btn:hover, .option-btn.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .results {
+            display: none;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .result-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            text-align: left;
+        }
+        
+        .acne-type-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            background: white;
+            border-radius: 5px;
+        }
+        
+        .severity-bar {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 20px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+        
+        .severity-fill {
+            background: linear-gradient(90deg, #28a745, #ffc107, #dc3545);
+            height: 100%;
+            transition: width 0.3s;
+        }
+        
+        .progress-bar {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 20px;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: #28a745;
+            height: 100%;
+            transition: width 0.3s;
+        }
+        
+        .progress-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: #333;
+            font-size: 12px;
+            line-height: 20px;
+        }
+        
+        .analysis-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .image-preview {
+            margin: 1rem 0;
+            text-align: center;
+        }
+        
+        .preview-img {
+            max-width: 200px;
+            border-radius: 10px;
+            border: 2px solid #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="disclaimer">
+        ⚠️ Important: This tool provides educational information only. It is not medical advice. Please consult a healthcare professional for diagnosis and treatment.
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>🧴 AcneAI Analyzer</h1>
+            <p>AI-powered acne recognition and treatment guidance</p>
+        </header>
+
+        <!-- Step 1: Camera -->
+        <div id="cameraStep" class="step-container">
+            <h2>📸 Step 1: Capture Skin Image</h2>
+            <p>Take a clear photo of your skin for AI analysis</p>
+            
+            <div class="camera-container">
+                <div class="camera-frame">
+                    <video id="videoElement" autoplay style="display: none;"></video>
+                    <div id="cameraPlaceholder" class="camera-placeholder">
+                        <p>Camera access required for skin analysis</p>
+                        <button class="primary-btn" onclick="startCamera()">📸 Enable Camera</button>
+                    </div>
+                </div>
+                
+                <div class="camera-controls">
+                    <button id="captureBtn" class="primary-btn" style="display: none;" onclick="captureAndAnalyze()">📷 Capture & Analyze</button>
+                    <button id="switchCameraBtn" class="secondary-btn" style="display: none;" onclick="switchCamera()">🔄 Switch Camera</button>
+                </div>
+                
+                <div id="analysisOverlay" class="analysis-overlay">
+                    <div class="spinner"></div>
+                    <p>AI is analyzing your skin condition...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: Questionnaire -->
+        <div id="questionnaireStep" class="step-container questionnaire">
+            <h2>📋 Step 2: Lifestyle Assessment</h2>
+            <p>Help us understand potential causes and triggers</p>
+            
+            <div class="image-preview">
+                <img id="capturedImage" src="" alt="Captured skin" class="preview-img">
+            </div>
+            
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill" style="width: 25%"></div>
+                <div class="progress-text">Question 1 of 4</div>
+            </div>
+            
+            <div id="questionContainer">
+                <!-- Questions will be loaded here by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Step 3: Results -->
+        <div id="resultsStep" class="step-container results">
+            <h2>📊 Analysis Results</h2>
+            
+            <div class="results-grid">
+                <div class="result-card">
+                    <h3>🎯 Acne Analysis</h3>
+                    <div class="acne-types">
+                        <h4>Detected Acne Types:</h4>
+                        <div id="acneTypesList">
+                            <!-- Acne types will be populated here -->
+                        </div>
+                    </div>
+                    <div class="severity">
+                        <h4>Severity Level:</h4>
+                        <div class="severity-bar">
+                            <div id="severityFill" class="severity-fill" style="width: 65%"></div>
+                        </div>
+                        <span id="severityText">6.5/10</span>
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <h3>🔍 Identified Causes</h3>
+                    <div id="causesList" class="causes-list">
+                        <!-- Causes will be populated here -->
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <h3>💡 Recommendations</h3>
+                    <div class="recommendations">
+                        <h4>Immediate Actions:</h4>
+                        <ul id="immediateActions">
+                            <!-- Actions will be populated here -->
+                        </ul>
+                        
+                        <h4>Skincare Routine:</h4>
+                        <div id="routineSteps">
+                            <!-- Routine steps will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="primary-btn" onclick="restartAnalysis()">🔄 Start New Analysis</button>
+        </div>
+    </div>
+
+    <script>
+        <script>
+    // Camera variables
+    let currentStream = null;
+    let currentFacingMode = 'user';
+    let capturedPhoto = null;
+
+    // Questionnaire data and state
+    let currentQuestion = 0;
+    let questionnaireAnswers = {};
+    const questions = [
+        {
+            id: 'skin_type',
+            type: 'single',
+            question: 'What is your skin type?',
+            options: ['Oily', 'Combination', 'Dry', 'Normal', 'Sensitive']
+        },
+        {
+            id: 'acne_locations',
+            type: 'multiple',
+            question: 'Where do you typically get breakouts?',
+            options: ['Forehead', 'Cheeks', 'Chin/Jawline', 'Nose', 'Back', 'Chest']
+        },
+        {
+            id: 'severity',
+            type: 'scale',
+            question: 'How severe is your acne?',
+            options: ['Very Mild', 'Mild', 'Moderate', 'Severe', 'Very Severe']
+        },
+        {
+            id: 'triggers',
+            type: 'multiple',
+            question: 'What seems to trigger your breakouts?',
+            options: ['Stress', 'Hormonal changes', 'Certain foods', 'Skincare products', 'Makeup', 'Weather changes']
+        }
+    ];
+
+    // Start camera function
+    async function startCamera() {
+        try {
+            const constraints = {
+                video: { 
+                    facingMode: currentFacingMode,
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                }
+            };
+            
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            currentStream = stream;
+            
+            const videoElement = document.getElementById('videoElement');
+            videoElement.srcObject = stream;
+            videoElement.style.display = 'block';
+            
+            document.getElementById('cameraPlaceholder').style.display = 'none';
+            document.getElementById('captureBtn').style.display = 'inline-block';
+            document.getElementById('switchCameraBtn').style.display = 'inline-block';
+            
+        } catch (err) {
+            console.error('Error accessing camera:', err);
+            alert('Error accessing camera. Please make sure you have granted camera permissions.');
+        }
+    }
+
+    // Switch between front and rear camera
+    function switchCamera() {
+        if (currentStream) {
+            currentStream.getTracks().forEach(track => track.stop());
+        }
+        
+        currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
+        startCamera();
+    }
+
+    // Capture photo and analyze
+    function captureAndAnalyze() {
+        const video = document.getElementById('videoElement');
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        capturedPhoto = canvas.toDataURL('image/jpeg');
+        document.getElementById('capturedImage').src = capturedPhoto;
+        
+        // Show analysis overlay
+        document.getElementById('analysisOverlay').style.display = 'flex';
+        
+        // Simulate AI analysis
+        setTimeout(() => {
+            document.getElementById('analysisOverlay').style.display = 'none';
+            
+            // Stop camera
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+            }
+            
+            // Move to questionnaire
+            document.getElementById('cameraStep').style.display = 'none';
+            document.getElementById('questionnaireStep').style.display = 'block';
+            
+            // Load first question
+            loadQuestion(0);
+            
+        }, 2000);
+    }
+
+    // Load question - FIXED VERSION
+    function loadQuestion(questionIndex) {
+        currentQuestion = questionIndex;
+        const question = questions[questionIndex];
+        const container = document.getElementById('questionContainer');
+        
+        // Update progress
+        const progress = ((questionIndex + 1) / questions.length) * 100;
+        document.getElementById('progressFill').style.width = progress + '%';
+        document.querySelector('.progress-text').textContent = `Question ${questionIndex + 1} of ${questions.length}`;
+        
+        let html = `<div class="question">
+            <h3>${question.question}</h3>
+            <div class="options-grid">`;
+        
+        if (question.type === 'single') {
+            question.options.forEach(option => {
+                html += `<button class="option-btn" onclick="selectSingleOption('${option}')">${option}</button>`;
+            });
+        } else if (question.type === 'multiple') {
+            // Initialize empty array for this question if not exists
+            if (!questionnaireAnswers[question.id]) {
+                questionnaireAnswers[question.id] = [];
+            }
+            
+            question.options.forEach(option => {
+                const isChecked = questionnaireAnswers[question.id].includes(option);
+                html += `
+                    <label style="display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" value="${option}" ${isChecked ? 'checked' : ''} onchange="toggleMultipleOption('${question.id}', '${option}', this.checked)">
+                        ${option}
+                    </label>`;
+            });
+            html += `<button class="primary-btn" onclick="continueToNextQuestion()" style="margin-top: 20px; grid-column: 1 / -1;">Continue</button>`;
+        } else if (question.type === 'scale') {
+            // Scale type question - show buttons instead of actual scale for simplicity
+            question.options.forEach((option, index) => {
+                html += `<button class="option-btn" onclick="selectScaleOption('${question.id}', ${index + 1}, '${option}')">${option}</button>`;
+            });
+        }
+        
+        html += `</div></div>`;
+        container.innerHTML = html;
+    }
+
+    // Handle single option selection - FIXED
+    function selectSingleOption(option) {
+        const currentQ = questions[currentQuestion];
+        questionnaireAnswers[currentQ.id] = option;
+        console.log('Selected:', currentQ.id, option);
+        
+        moveToNextQuestion();
+    }
+
+    // Handle scale option selection - NEW
+    function selectScaleOption(questionId, value, label) {
+        questionnaireAnswers[questionId] = { value, label };
+        console.log('Scale selected:', questionId, value, label);
+        
+        moveToNextQuestion();
+    }
+
+    // Handle multiple option selection - FIXED
+    function toggleMultipleOption(questionId, option, isChecked) {
+        if (!questionnaireAnswers[questionId]) {
+            questionnaireAnswers[questionId] = [];
+        }
+        
+        if (isChecked) {
+            if (!questionnaireAnswers[questionId].includes(option)) {
+                questionnaireAnswers[questionId].push(option);
+            }
+        } else {
+            questionnaireAnswers[questionId] = questionnaireAnswers[questionId].filter(item => item !== option);
+        }
+        
+        console.log('Multiple selection updated:', questionId, questionnaireAnswers[questionId]);
+    }
+
+    // Continue to next question for multiple choice - FIXED
+    function continueToNextQuestion() {
+        const currentQ = questions[currentQuestion];
+        
+        // Validate that at least one option is selected for multiple choice questions
+        if (currentQ.type === 'multiple' && (!questionnaireAnswers[currentQ.id] || questionnaireAnswers[currentQ.id].length === 0)) {
+            alert('Please select at least one option to continue.');
+            return;
+        }
+        
+        moveToNextQuestion();
+    }
+
+    // Move to next question or complete - FIXED
+    function moveToNextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            loadQuestion(currentQuestion + 1);
+        } else {
+            completeQuestionnaire();
+        }
+    }
+
+    // Complete questionnaire and show results - FIXED
+    function completeQuestionnaire() {
+        console.log('All answers:', questionnaireAnswers);
+        
+        // Generate results based on answers
+        const analysisResults = generateResults(questionnaireAnswers);
+        
+        // Display results
+        displayResults(analysisResults);
+        
+        // Show results step
+        document.getElementById('questionnaireStep').style.display = 'none';
+        document.getElementById('resultsStep').style.display = 'block';
+    }
+
+    // Generate results based on questionnaire answers - NEW
+    function generateResults(answers) {
+        // This is where you would normally send data to your backend
+        // For now, we'll generate realistic results based on the answers
+        
+        let severity = 5; // Default moderate
+        let causes = [];
+        let recommendations = {
+            immediate: [],
+            routine: []
+        };
+
+        // Analyze skin type
+        if (answers.skin_type === 'Oily') {
+            causes.push('Excess sebum production');
+            recommendations.immediate.push('Use oil-free, non-comedogenic products');
+        } else if (answers.skin_type === 'Dry') {
+            causes.push('Skin barrier compromise');
+            recommendations.immediate.push('Focus on barrier repair with ceramides');
+        } else if (answers.skin_type === 'Sensitive') {
+            causes.push('Skin sensitivity and inflammation');
+            recommendations.immediate.push('Use gentle, fragrance-free products');
+        }
+
+        // Analyze locations
+        if (answers.acne_locations && answers.acne_locations.includes('Chin/Jawline')) {
+            causes.push('Likely hormonal influences');
+            recommendations.immediate.push('Consider discussing hormonal options with dermatologist');
+        }
+        
+        if (answers.acne_locations && answers.acne_locations.includes('Forehead')) {
+            causes.push('Possible hair product or sweat-related');
+            recommendations.immediate.push('Keep hair off forehead and cleanse after sweating');
+        }
+
+        // Analyze severity
+        if (answers.severity) {
+            const severityMap = {
+                'Very Mild': 2,
+                'Mild': 4,
+                'Moderate': 6,
+                'Severe': 8,
+                'Very Severe': 9
+            };
+            severity = severityMap[answers.severity.label] || 5;
+        }
+
+        // Analyze triggers
+        if (answers.triggers) {
+            if (answers.triggers.includes('Stress')) {
+                causes.push('Stress-related breakouts');
+                recommendations.immediate.push('Practice stress management techniques');
+            }
+            if (answers.triggers.includes('Hormonal changes')) {
+                causes.push('Hormonal fluctuations');
+                recommendations.immediate.push('Track your cycle and adjust routine accordingly');
+            }
+            if (answers.triggers.includes('Certain foods')) {
+                causes.push('Dietary triggers');
+                recommendations.immediate.push('Consider eliminating dairy or high-glycemic foods for 2 weeks');
+            }
+        }
+
+        // Generate routine based on analysis
+        recommendations.routine = [
+            'AM: Gentle cleanser → Vitamin C serum → Oil-free moisturizer with SPF 30+',
+            'PM: Double cleanse → Treatment serum (BHA for oily, hydrating for dry) → Repair moisturizer',
+            'Weekly: Exfoliate 1-2 times → Hydrating mask'
+        ];
+
+        // Add specific product recommendations based on skin type
+        if (answers.skin_type === 'Oily') {
+            recommendations.routine.push('Recommended: Salicylic acid cleanser, niacinamide serum, gel moisturizer');
+        } else if (answers.skin_type === 'Dry') {
+            recommendations.routine.push('Recommended: Cream cleanser, hyaluronic acid, rich cream with ceramides');
+        }
+
+        return {
+            acneTypes: [
+                { type: 'Comedonal (Blackheads/Whiteheads)', confidence: 75 },
+                { type: 'Inflammatory (Red Bumps)', confidence: 60 }
+            ],
+            severity: severity,
+            causes: causes.length > 0 ? causes : ['Multiple contributing factors identified'],
+            recommendations: recommendations
+        };
+    }
+
+    // Display analysis results - FIXED
+    function displayResults(results) {
+        // Display acne types
+        const acneTypesList = document.getElementById('acneTypesList');
+        acneTypesList.innerHTML = '';
+        results.acneTypes.forEach(acne => {
+            const item = document.createElement('div');
+            item.className = 'acne-type-item';
+            item.innerHTML = `
+                <span>${acne.type}</span>
+                <span>${acne.confidence}%</span>
+            `;
+            acneTypesList.appendChild(item);
+        });
+
+        // Display severity
+        const severityPercent = (results.severity / 10) * 100;
+        document.getElementById('severityFill').style.width = severityPercent + '%';
+        document.getElementById('severityText').textContent = results.severity + '/10';
+
+        // Display causes
+        const causesList = document.getElementById('causesList');
+        causesList.innerHTML = '';
+        results.causes.forEach(cause => {
+            const item = document.createElement('div');
+            item.className = 'cause-item';
+            item.style.cssText = 'margin: 8px 0; padding: 8px; background: white; border-radius: 5px;';
+            item.textContent = '• ' + cause;
+            causesList.appendChild(item);
+        });
+
+        // Display recommendations
+        const immediateActions = document.getElementById('immediateActions');
+        immediateActions.innerHTML = '';
+        results.recommendations.immediate.forEach(action => {
+            const li = document.createElement('li');
+            li.style.cssText = 'margin: 5px 0; padding: 5px 0;';
+            li.textContent = action;
+            immediateActions.appendChild(li);
+        });
+
+        const routineSteps = document.getElementById('routineSteps');
+        routineSteps.innerHTML = '';
+        results.recommendations.routine.forEach(step => {
+            const div = document.createElement('div');
+            div.className = 'routine-step';
+            div.style.cssText = 'background: white; padding: 12px; margin: 8px 0; border-radius: 8px; border-left: 4px solid #28a745; font-size: 14px;';
+            div.textContent = step;
+            routineSteps.appendChild(div);
+        });
+    }
+
+    // Restart analysis - FIXED
+    function restartAnalysis() {
+        // Reset everything
+        currentQuestion = 0;
+        capturedPhoto = null;
+        questionnaireAnswers = {};
+        
+        // Show camera step
+        document.getElementById('resultsStep').style.display = 'none';
+        document.getElementById('cameraStep').style.display = 'block';
+        
+        // Reset camera
+        document.getElementById('cameraPlaceholder').style.display = 'flex';
+        document.getElementById('videoElement').style.display = 'none';
+        document.getElementById('captureBtn').style.display = 'none';
+        document.getElementById('switchCameraBtn').style.display = 'none';
+        
+        if (currentStream) {
+            currentStream.getTracks().forEach(track => track.stop());
+            currentStream = null;
+        }
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('AcneAI Analyzer loaded successfully!');
+        // Initialize questionnaire answers object
+        questionnaireAnswers = {};
+    });
+</script>
+
+    </script>
+</body>
+</html>

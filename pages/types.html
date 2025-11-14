@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acne Types - ClearSkin Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .disclaimer {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #ffeaa7;
+            font-size: 14px;
+        }
+        
+        .navbar {
+            background: #fff;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            color: #4a90e2;
+            font-size: 1.5rem;
+            text-decoration: none;
+        }
+        
+        .nav-links a {
+            margin-left: 2rem;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #4a90e2;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .acne-types-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .acne-type-card {
+            background: white;
+            color: #333;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .acne-type-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .acne-type-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .acne-type-header h3 {
+            color: #4a90e2;
+            font-size: 1.5rem;
+        }
+        
+        .severity-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .severity-mild {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .severity-moderate {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .severity-severe {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .description {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .symptoms, .treatment {
+            margin-bottom: 1rem;
+        }
+        
+        .symptoms h4, .treatment h4 {
+            color: #4a90e2;
+            margin-bottom: 0.5rem;
+        }
+        
+        ul {
+            padding-left: 1.5rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: background 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: #5a6fd8;
+        }
+    </style>
+</head>
+<body>
+    <div class="disclaimer">
+        ⚠️ Important: This website provides educational information only. It is not medical advice. Please consult a healthcare professional for diagnosis and treatment.
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="../index.html" class="logo">ClearSkin Guide</a>
+            <div class="nav-links">
+                <a href="../index.html">Home</a>
+                <a href="types.html" style="color: #4a90e2;">Acne Types</a>
+                <a href="treatments.html">Treatments</a>
+                <a href="quiz.html">Acne Quiz</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>🧴 Acne Types & Identification</h1>
+            <p>Learn to recognize different types of acne and understand their characteristics</p>
+        </div>
+
+        <div class="acne-types-grid">
+            <!-- Comedonal Acne -->
+            <div class="acne-type-card">
+                <div class="acne-type-header">
+                    <h3>Comedonal Acne</h3>
+                    <span class="severity-badge severity-mild">Mild</span>
+                </div>
+                <p class="description">Non-inflammatory acne characterized by clogged pores without redness or swelling.</p>
+                
+                <div class="symptoms">
+                    <h4>🔍 Symptoms:</h4>
+                    <ul>
+                        <li>Blackheads (open comedones)</li>
+                        <li>Whiteheads (closed comedones)</li>
+                        <li>Small flesh-colored bumps</li>
+                        <li>No redness or pain</li>
+                    </ul>
+                </div>
+                
+                <div class="treatment">
+                    <h4>💡 Treatment Approach:</h4>
+                    <ul>
+                        <li>Salicylic acid products</li>
+                        <li>Retinoids (retinol, tretinoin)</li>
+                        <li>Regular exfoliation</li>
+                        <li>Non-comedogenic products</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Inflammatory Acne -->
+            <div class="acne-type-card">
+                <div class="acne-type-header">
+                    <h3>Inflammatory Acne</h3>
+                    <span class="severity-badge severity-moderate">Moderate</span>
+                </div>
+                <p class="description">Red, swollen, and painful breakouts caused by inflammation and bacterial infection.</p>
+                
+                <div class="symptoms">
+                    <h4>🔍 Symptoms:</h4>
+                    <ul>
+                        <li>Red papules (small bumps)</li>
+                        <li>Pustules (pus-filled pimples)</li>
+                        <li>Tenderness and swelling</li>
+                        <li>Localized inflammation</li>
+                    </ul>
+                </div>
+                
+                <div class="treatment">
+                    <h4>💡 Treatment Approach:</h4>
+                    <ul>
+                        <li>Benzoyl peroxide</li>
+                        <li>Antibacterial treatments</li>
+                        <li>Anti-inflammatory ingredients</li>
+                        <li>Professional extractions</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Cystic Acne -->
+            <div class="acne-type-card">
+                <div class="acne-type-header">
+                    <h3>Cystic Acne</h3>
+                    <span class="severity-badge severity-severe">Severe</span>
+                </div>
+                <p class="description">Deep, painful, inflamed lesions that develop under the skin's surface.</p>
+                
+                <div class="symptoms">
+                    <h4>🔍 Symptoms:</h4>
+                    <ul>
+                        <li>Large, painful lumps under skin</li>
+                        <li>Deep inflammation</li>
+                        <li>Potential for scarring</li>
+                        <li>Long healing time</li>
+                    </ul>
+                </div>
+                
+                <div class="treatment">
+                    <h4>💡 Treatment Approach:</h4>
+                    <ul>
+                        <li>Dermatologist consultation</li>
+                        <li>Prescription medications</li>
+                        <li>Professional procedures</li>
+                        <li>Systemic treatments</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Hormonal Acne -->
+            <div class="acne-type-card">
+                <div class="acne-type-header">
+                    <h3>Hormonal Acne</h3>
+                    <span class="severity-badge severity-moderate">Moderate</span>
+                </div>
+                <p class="description">Acne influenced by hormonal fluctuations, typically around jawline and chin.</p>
+                
+                <div class="symptoms">
+                    <h4>🔍 Symptoms:</h4>
+                    <ul>
+                        <li>Deep, painful cysts</li>
+                        <li>Concentrated on lower face</li>
+                        <li>Cyclical flare-ups</li>
+                        <li>Often in adult women</li>
+                    </ul>
+                </div>
+                
+                <div class="treatment">
+                    <h4>💡 Treatment Approach:</h4>
+                    <ul>
+                        <li>Hormonal treatments</li>
+                        <li>Birth control pills</li>
+                        <li>Anti-androgen medications</li>
+                        <li>Lifestyle modifications</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <a href="../index.html" class="back-btn">← Back to Home</a>
+    </div>
+</body>
+</html>

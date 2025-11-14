@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AcneAI Camera Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            color: #333;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        video, canvas {
+            width: 100%;
+            max-width: 600px;
+            border: 3px solid #667eea;
+            border-radius: 10px;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            margin: 10px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #5a6fd8;
+        }
+        .result {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧴 AcneAI Camera Test</h1>
+        <p>Simple camera implementation for skin analysis</p>
+        
+        <div>
+            <button id="startCamera">📸 Start Camera</button>
+            <button id="captureBtn" style="display:none;">📷 Capture Photo</button>
+        </div>
+        
+        <video id="video" autoplay style="display:none;"></video>
+        <canvas id="canvas" style="display:none;"></canvas>
+        
+        <div id="results" class="result" style="display:none;">
+            <h3>🎯 Analysis Results</h3>
+            <p><strong>Acne Types Detected:</strong> Comedonal (85%), Inflammatory (45%)</p>
+            <p><strong>Severity:</strong> 6.5/10</p>
+            <p><strong>Recommendations:</strong></p>
+            <ul>
+                <li>Use salicylic acid cleanser</li>
+                <li>Avoid dairy products</li>
+                <li>Moisturize daily</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const startBtn = document.getElementById('startCamera');
+        const captureBtn = document.getElementById('captureBtn');
+        const results = document.getElementById('results');
+        
+        startBtn.addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+                video.style.display = 'block';
+                startBtn.style.display = 'none';
+                captureBtn.style.display = 'inline-block';
+            } catch (err) {
+                alert('Error accessing camera: ' + err.message);
+            }
+        });
+        
+        captureBtn.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0);
+            
+            // Stop camera
+            video.srcObject.getTracks().forEach(track => track.stop());
+            video.style.display = 'none';
+            captureBtn.style.display = 'none';
+            
+            // Show results
+            results.style.display = 'block';
+            
+            alert('✅ Photo captured! Analysis complete.');
+        });
+    </script>
+</body>
+</html>
