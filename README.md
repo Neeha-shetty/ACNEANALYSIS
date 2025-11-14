@@ -24,7 +24,7 @@ A comprehensive web application for acne recognition, analysis, and personalized
 
 1. **Clone the repository**
    \`\`\`bash
-   git clone https://github.com/yourusername/acne-ai-website.git
+   git clone https://github.com/Neeha-shetty/ACNEANALYSIS
    cd acne-ai-website
    \`\`\`
 
